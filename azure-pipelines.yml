@@ -24,6 +24,12 @@ steps:
     npm pack
   displayName: 'Package for npm release'
 
+- task: ExtractFiles@1
+  inputs:
+    archiveFilePatterns: '*.zip'
+    destinationFolder: '$(Build.SourcesDirectory)'
+    cleanDestinationFolder: false
+
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
