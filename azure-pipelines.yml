@@ -1,6 +1,6 @@
 jobs:
 - deployment: deploymentJob1
-  environment: testEnvironmentCheck
+  environment: testEnvironmentCheck.testAgent1
   pool: Default
   strategy:
    runOnce:
