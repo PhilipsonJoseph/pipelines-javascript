@@ -1,3 +1,4 @@
+trigger: none
 jobs:
 - deployment: deploymentJob1
   environment: testEnvironmentCheck.testAgent1
