@@ -1,5 +1,5 @@
 pool:
-  name: TestPrivatePool
+  name: Azure Pipelines
 #Your build pipeline references an undefined variable named ‘synapsesqldedendpoint’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
 
 steps:
