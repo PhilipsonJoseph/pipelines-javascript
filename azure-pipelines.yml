@@ -1,11 +1,45 @@
-trigger: none
-jobs:
-- deployment: deploymentJob1
-  environment: testEnvironmentCheck.testAgent1
-  pool: Default
-  strategy:
-   runOnce:
-    deploy:
-     steps:
-     - script: echo Hello, world!
-       displayName: 'Run a one-line script'
+pool:
+  name: TestPrivatePool
+#Your build pipeline references an undefined variable named ‘synapsesqldedendpoint’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+
+steps:
+- task: AzurePowerShell@4
+  displayName: 'Azure PowerShell script: FilePath'
+  inputs:
+    azureSubscription: 'DTLQA(c94bda7a-0577-4374-9c53-0e46a9fb0f70)'
+    ScriptPath: 'C:\Users\v-phiv\Desktop\sample\a3\_work\test.ps1'
+    ScriptArguments: '-parameterA "https://url-parameter-A.example.com" -parameterB "https://url-parameter-B.example.com" -parameterC "https://portal.azure.com/#@ttribalgroup.onmicrosoft.com/resource/subscriptions/placeholdersubscriptionId/resourceGroups/placeholderResourceGroupName/providers/Microsoft.EventGrid/partnerNamespaces/placeholderEGPN/eventChannels" -parameterD "https://url-parameter-D.example.com" -test test'
+    FailOnStandardError: true
+    azurePowerShellVersion: LatestVersion
+
+- task: AzureMysqlDeployment@1
+  displayName: 'Execute Azure MySQL : InlineSqlTask'
+  inputs:
+    azureSubscription: 'DTLQA(c94bda7a-0577-4374-9c53-0e46a9fb0f70)'
+    ServerName: philipsonmysqlserver.mysql.database.azure.com
+    DatabaseName: 'philipsonmysqlserver '
+    SqlUsername: 'pjadmin@philipsonmysqlserver'
+    SqlPassword: 'Ph64-1989'
+    TaskNameSelector: InlineSqlTask
+    SqlInline: 'select now();'
+  enabled: false
+
+- task: AzureWebApp@1
+  displayName: 'Azure Web App Deploy: philipsonTestLinuxWebapp'
+  inputs:
+    azureSubscription: 'DTLQA(c94bda7a-0577-4374-9c53-0e46a9fb0f70)'
+    appType: webAppLinux
+    appName: philipsonTestLinuxWebapp
+    package: '$(System.DefaultWorkingDirectory)'
+  enabled: false
+
+- task: SqlAzureDacpacDeployment@1
+  displayName: 'Azure SQL SqlTask'
+  inputs:
+    azureSubscription: 'DTLQA(c94bda7a-0577-4374-9c53-0e46a9fb0f70)'
+    AuthenticationType: aadAuthenticationIntegrated
+    ServerName: '$(synapsesqldedendpoint)'
+    DatabaseName: PhilipsonTestSQLpool
+    deployType: SqlTask
+    SqlFile: 'c:windows\sampleQuery.sql'
+  enabled: false
